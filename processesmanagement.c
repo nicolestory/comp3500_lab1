@@ -168,7 +168,8 @@ void CPUScheduler(Identifier whichPolicy) {
 /***********************************************************************\                                               
  * Input : None                                                         *                                               
  * Output: Pointer to the process based on First Come First Serve (FCFS)*
- * Function: Returns process control block based on FCFS                *                                                \***********************************************************************/
+ * Function: Returns process control block based on FCFS                *
+\***********************************************************************/
 ProcessControlBlock *FCFS_Scheduler() {
   /* Select Process based on FCFS */
   // Implement code for FCFS
