@@ -173,7 +173,7 @@ void CPUScheduler(Identifier whichPolicy) {
 ProcessControlBlock *FCFS_Scheduler() {
   /* Select Process based on FCFS */
   // Implement code for FCFS
-  ProcessControlBlock *selectedProcess;
+  ProcessControlBlock *selectedProcess = (ProcessControlBlock *) NULL;
 
   return(selectedProcess);
 }
@@ -187,7 +187,7 @@ ProcessControlBlock *FCFS_Scheduler() {
 \***********************************************************************/
 ProcessControlBlock *SRTF_Scheduler() {
   /* Select Process with Shortest Remaining Time*/
-  ProcessControlBlock *selectedProcess;
+  ProcessControlBlock *selectedProcess = (ProcessControlBlock *) NULL;
   
   // Implement code for SRTF
  
@@ -202,7 +202,7 @@ ProcessControlBlock *SRTF_Scheduler() {
  \***********************************************************************/
 ProcessControlBlock *RR_Scheduler() {
   /* Select Process based on RR*/
-  ProcessControlBlock *selectedProcess;
+  ProcessControlBlock *selectedProcess = (ProcessControlBlock *) NULL;
 
   // Implement code for RR                                                                                             
 
@@ -239,9 +239,7 @@ void NewJobIn(ProcessControlBlock whichProcess){
 }
 
 
-/***********************************************************************\                                               
-* Input : None                                                         *                                                
-* Output: None                                                         *                
+/***********************************************************************\                                               * Input : None                                                         *                                                * Output: None                                                         *                
 * Function:                                                            *
 * 1) BookKeeping is called automatically when 250 arrived              *
 * 2) Computes and display metrics: average turnaround  time, throughput*
