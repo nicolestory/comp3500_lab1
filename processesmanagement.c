@@ -145,7 +145,7 @@ void IO() {
   } // if (ProcessToMove)
 }
 
-/***********************************************************************\    
+/***********************************************************************\
  * Input : whichPolicy (1:FCFS, 2: SRTF, and 3:RR)                      *        
  * Output: None                                                         * 
  * Function: Selects Process from Ready Queue and Puts it on Running Q. *
@@ -165,10 +165,11 @@ void CPUScheduler(Identifier whichPolicy) {
   }
 }
 
-/***********************************************************************\                                               
+/***********************************************************************\
  * Input : None                                                         *                                               
  * Output: Pointer to the process based on First Come First Serve (FCFS)*
- * Function: Returns process control block based on FCFS                *                                                \***********************************************************************/
+ * Function: Returns process control block based on FCFS                *
+\***********************************************************************/
 ProcessControlBlock *FCFS_Scheduler() {
   /* Select Process based on FCFS */
   // Implement code for FCFS
@@ -179,7 +180,7 @@ ProcessControlBlock *FCFS_Scheduler() {
 
 
 
-/***********************************************************************\                         
+/***********************************************************************\
  * Input : None                                                         *                                     
  * Output: Pointer to the process with shortest remaining time (SRTF)   *                                     
  * Function: Returns process control block with SRTF                    *                                     
@@ -194,10 +195,10 @@ ProcessControlBlock *SRTF_Scheduler() {
 }
 
 
-/***********************************************************************\                                               
+/***********************************************************************\
  * Input : None                                                         *                                               
  * Output: Pointer to the process based on Round Robin (RR)             *                                               
- * Function: Returns process control block based on RR                  *                                              \
+ * Function: Returns process control block based on RR                  *
  \***********************************************************************/
 ProcessControlBlock *RR_Scheduler() {
   /* Select Process based on RR*/
@@ -208,7 +209,7 @@ ProcessControlBlock *RR_Scheduler() {
   return(selectedProcess);
 }
 
-/***********************************************************************\  
+/***********************************************************************\
  * Input : None                                                         *   
  * Output: None                                                         *   
  * Function:                                                            *
@@ -238,7 +239,9 @@ void NewJobIn(ProcessControlBlock whichProcess){
 }
 
 
-/***********************************************************************\                                               * Input : None                                                         *                                                * Output: None                                                         *                
+/***********************************************************************\
+* Input : None                                                         *                                                
+* Output: None                                                         *
 * Function:                                                            *
 * 1) BookKeeping is called automatically when 250 arrived              *
 * 2) Computes and display metrics: average turnaround  time, throughput*
