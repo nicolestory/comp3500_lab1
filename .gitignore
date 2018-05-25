@@ -1,2 +1,5 @@
 pm
 Source.*
+.idea/
+CMakeLists.txt
+cmake-build-debug/
