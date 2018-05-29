@@ -173,8 +173,8 @@ void CPUScheduler(Identifier whichPolicy) {
 ProcessControlBlock *FCFS_Scheduler() {
   /* Select Process based on FCFS */
   // Implement code for FCFS
-  ProcessControlBlock *selectedProcess = (ProcessControlBlock *) NULL;
-
+  ProcessControlBlock *selectedProcess = (ProcessControlBlock *) DequeueProcess(READYQUEUE);
+  
   return(selectedProcess);
 }
 
@@ -218,7 +218,22 @@ ProcessControlBlock *RR_Scheduler() {
 \***********************************************************************/
 void Dispatcher() {
   double start;
-  //
+  ProcessControlBlock *nextProcess = DequeueProcess(RUNNINGQUEUE);
+  if (nextProcess != NULL)
+  {
+    printf("PCB is not null. Hooray.\n");
+    OnCPU(nextProcess, Quantum);
+    if (nextProcess->state == DONE)
+    {
+      printf("DONE! To the Exit Queueue!\n");
+      EnqueueProcess(EXITQUEUE, nextProcess);
+    }
+    else
+    {
+      printf("Working on it... To the Ready Queueue!\n");
+      EnqueueProcess(READYQUEUE, nextProcess);
+    }
+  }
 }
 
 /***********************************************************************\
