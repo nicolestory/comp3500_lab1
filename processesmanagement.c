@@ -215,7 +215,7 @@ ProcessControlBlock *RR_Scheduler() {
 \***********************************************************************/
 void Dispatcher() {
   //double start = Now();
-  ProcessControlBlock *nextProcess = DequeueProcess(RUNNINGQUEUE);
+  ProcessControlBlock *nextProcess = Queues[RUNNINGQUEUE].Tail;
   if (nextProcess == NULL)
   {
     return;
@@ -244,7 +244,7 @@ void Dispatcher() {
   {
     CpuBurstTime = nextProcess->RemainingCpuBurstTime;
   }
-  printf("CPU burst time: %f", CpuBurstTime);
+  printf("CPU burst time: %f, TimeInCpu: %f, TotalJobDuration: %f\n", CpuBurstTime, nextProcess->TimeInCpu, nextProcess->TotalJobDuration);
   Timestamp start = Now();
   OnCPU(nextProcess, CpuBurstTime);
   Timestamp end = Now();
@@ -254,7 +254,7 @@ void Dispatcher() {
   nextProcess->RemainingCpuBurstTime -= totalTime;
   nextProcess->TimeInCpu += totalTime;
  
-  printf("start %f end %f, totalTime %f, state %i, remainingtime %f, timeincpu %f\n", start, end, totalTime, nextProcess->state, nextProcess->RemainingCpuBurstTime, nextProcess->TimeInCpu);
+  printf("pid %i start %f end %f, totalTime %f, state %i, remainingtime %f, timeincpu %f\n", nextProcess->ProcessID, start, end, totalTime, nextProcess->state, nextProcess->RemainingCpuBurstTime, nextProcess->TimeInCpu);
  
 
   /*if (nextProcess != NULL)
