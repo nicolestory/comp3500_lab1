@@ -214,12 +214,57 @@ ProcessControlBlock *RR_Scheduler() {
  *              else move process from running queue to Exit Queue      *     
 \***********************************************************************/
 void Dispatcher() {
-  double start;
+  //double start = Now();
   ProcessControlBlock *nextProcess = DequeueProcess(RUNNINGQUEUE);
-  if (nextProcess != NULL)
+  if (nextProcess == NULL)
+  {
+    return;
+  }
+  if (nextProcess->StartCpuTime == 0.0)
+  {
+    printf("Brand new process (pid %i) on running queueueueuueu\n", nextProcess->ProcessID);
+    nextProcess->StartCpuTime = Now();
+    printf("new startcpu: %f", nextProcess->StartCpuTime);
+  }
+  if (nextProcess->TotalJobDuration == nextProcess->TimeInCpu)
+  {
+    printf("Finished process on running queueueueu, moving to exit q\n\n");
+    nextProcess->state = DONE;
+    EnqueueProcess(EXITQUEUE, nextProcess);
+    return;
+  }
+
+  //Determine CPU Burst Length
+  TimePeriod CpuBurstTime;
+  if (PolicyNumber == RR)
+  {
+    CpuBurstTime = Quantum;
+  }
+  else
+  {
+    CpuBurstTime = nextProcess->RemainingCpuBurstTime;
+  }
+  printf("CPU burst time: %f", CpuBurstTime);
+  Timestamp start = Now();
+  OnCPU(nextProcess, CpuBurstTime);
+  Timestamp end = Now();
+  TimePeriod totalTime = end - start;
+
+  // Update PCB:
+  nextProcess->RemainingCpuBurstTime -= totalTime;
+  nextProcess->TimeInCpu += totalTime;
+ 
+  printf("start %f end %f, totalTime %f, state %i, remainingtime %f, timeincpu %f\n", start, end, totalTime, nextProcess->state, nextProcess->RemainingCpuBurstTime, nextProcess->TimeInCpu);
+ 
+
+  /*if (nextProcess != NULL)
   {
     printf("PCB is not null. Hooray.\n");
-    OnCPU(nextProcess, Quantum);
+    Timestamp start = Now();
+    OnCPU(nextProcess, nextProcess->RemainingCpuBurstTime);
+    Timestamp end = Now();
+    Timestamp totalTime = end - start;
+    printf("start %f end %f, totalTime %f, state %i, remainingtime %f\n", start, end, totalTime, nextProcess->state, nextProcess->RemainingCpuBurstTime);
     if (nextProcess->state == DONE)
     {
       printf("DONE! To the Exit Queueue!\n");
@@ -227,10 +272,10 @@ void Dispatcher() {
     }
     else
     {
-      printf("Working on it... To the Ready Queueue!\n");
+      //printf("Working on it... To the Ready Queueue!\n");
       EnqueueProcess(READYQUEUE, nextProcess);
     }
-  }
+  }*/
 }
 
 /***********************************************************************\
