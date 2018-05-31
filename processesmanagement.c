@@ -171,11 +171,7 @@ void CPUScheduler(Identifier whichPolicy) {
  * Function: Returns process control block based on FCFS                *
 \***********************************************************************/
 ProcessControlBlock *FCFS_Scheduler() {
-  /* Select Process based on FCFS */
-  // Implement code for FCFS
-  ProcessControlBlock *selectedProcess = (ProcessControlBlock *) DequeueProcess(READYQUEUE);
-  
-  return(selectedProcess);
+    return(DequeueProcess(READYQUEUE));
 }
 
 
@@ -186,12 +182,18 @@ ProcessControlBlock *FCFS_Scheduler() {
  * Function: Returns process control block with SRTF                    *                                     
 \***********************************************************************/
 ProcessControlBlock *SRTF_Scheduler() {
-  /* Select Process with Shortest Remaining Time*/
-  ProcessControlBlock *selectedProcess = (ProcessControlBlock *) NULL;
-  
-  // Implement code for SRTF
- 
-  return(selectedProcess);
+  ProcessControlBlock *currentPCB = QueueParms[RUNNINGQUEUE]->Tail;
+  ProcessControlBlock *shortestPCB = currentPCB;
+
+  while (currentPCB != NULL) {
+      if (currentPCB->RemainingCpuBurstTime < shortestPCB->RemainingCpuBurstTime) {
+          shortestPCB = currentPCB;
+      }
+
+      currentPCB = currentPCB->previous;
+  }
+
+  return(shortestPCB);
 }
 
 
@@ -201,12 +203,7 @@ ProcessControlBlock *SRTF_Scheduler() {
  * Function: Returns process control block based on RR                  *
  \***********************************************************************/
 ProcessControlBlock *RR_Scheduler() {
-  /* Select Process based on RR*/
-  ProcessControlBlock *selectedProcess = (ProcessControlBlock *) NULL;
-
-  // Implement code for RR                                                                                             
-
-  return(selectedProcess);
+    return(DequeueProcess(READYQUEUE));
 }
 
 /***********************************************************************\
