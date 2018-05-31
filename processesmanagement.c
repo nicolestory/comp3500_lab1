@@ -184,7 +184,7 @@ ProcessControlBlock *FCFS_Scheduler() {
 ProcessControlBlock *SRTF_Scheduler() {
     ProcessControlBlock *shortestPCB = currentPCB;
 
-    ProcessControlBlock *currentPCB = QueueParms[RUNNINGQUEUE]->Tail;
+    ProcessControlBlock *currentPCB = QueueParms[READYQUEUE]->Tail;
     while (currentPCB != NULL) {
         if (currentPCB->RemainingCpuBurstTime < shortestPCB->RemainingCpuBurstTime) {
             shortestPCB = currentPCB;
