@@ -131,14 +131,14 @@ void IO() {
     ProcessToMove = DequeueProcess(WAITINGQUEUE);
     while (ProcessToMove){
       if (Now()>=ProcessToMove->TimeIOBurstDone){
-	ProcessToMove->RemainingCpuBurstTime = ProcessToMove->CpuBurstTime;
-	ProcessToMove->JobStartTime = Now();
-	EnqueueProcess(READYQUEUE,ProcessToMove);
+    ProcessToMove->RemainingCpuBurstTime = ProcessToMove->CpuBurstTime;
+    ProcessToMove->JobStartTime = Now();
+    EnqueueProcess(READYQUEUE,ProcessToMove);
       } else {
-	EnqueueProcess(WAITINGQUEUE,ProcessToMove);
+    EnqueueProcess(WAITINGQUEUE,ProcessToMove);
       }
       if (ProcessToMove->ProcessID == IDFirstProcess){
-	break;
+    break;
       }
       ProcessToMove =DequeueProcess(WAITINGQUEUE);
     } // while (ProcessToMove)
@@ -182,18 +182,18 @@ ProcessControlBlock *FCFS_Scheduler() {
  * Function: Returns process control block with SRTF                    *                                     
 \***********************************************************************/
 ProcessControlBlock *SRTF_Scheduler() {
-  ProcessControlBlock *currentPCB = QueueParms[RUNNINGQUEUE]->Tail;
-  ProcessControlBlock *shortestPCB = currentPCB;
+    ProcessControlBlock *shortestPCB = currentPCB;
 
-  while (currentPCB != NULL) {
-      if (currentPCB->RemainingCpuBurstTime < shortestPCB->RemainingCpuBurstTime) {
-          shortestPCB = currentPCB;
-      }
+    ProcessControlBlock *currentPCB = QueueParms[RUNNINGQUEUE]->Tail;
+    while (currentPCB != NULL) {
+        if (currentPCB->RemainingCpuBurstTime < shortestPCB->RemainingCpuBurstTime) {
+            shortestPCB = currentPCB;
+        }
 
-      currentPCB = currentPCB->previous;
-  }
+        currentPCB = currentPCB->previous;
+    }
 
-  return(shortestPCB);
+    return(shortestPCB);
 }
 
 
@@ -271,8 +271,8 @@ void BookKeeping(void){
   printf("Policy Number = %d, Quantum = %.6f   Show = %d\n", PolicyNumber, Quantum, Show);
   printf("Number of Completed Processes = %d\n", NumberofJobs[THGT]);
   printf("ATAT=%f   ART=%f  CBT = %f  T=%f AWT=%f\n", 
-	 SumMetrics[TAT], SumMetrics[RT], SumMetrics[CBT], 
-	 NumberofJobs[THGT]/Now(), SumMetrics[WT]);
+     SumMetrics[TAT], SumMetrics[RT], SumMetrics[CBT],
+     NumberofJobs[THGT]/Now(), SumMetrics[WT]);
 
   exit(0);
 }
