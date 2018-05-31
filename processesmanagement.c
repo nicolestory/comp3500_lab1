@@ -182,7 +182,9 @@ ProcessControlBlock *FCFS_Scheduler() {
  * Function: Returns process control block with SRTF                    *                                     
 \***********************************************************************/
 ProcessControlBlock *SRTF_Scheduler() {
-    ProcessControlBlock *currentPCB = Queues[READYQUEUE].Tail;
+    QueueParms readyQueue = Queues[READYQUEUE];
+
+    ProcessControlBlock *currentPCB = readyQueue.Tail;
     ProcessControlBlock *shortestPCB = currentPCB;
 
     while (currentPCB != NULL) {
