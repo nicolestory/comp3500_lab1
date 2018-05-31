@@ -131,14 +131,14 @@ void IO() {
     ProcessToMove = DequeueProcess(WAITINGQUEUE);
     while (ProcessToMove){
       if (Now()>=ProcessToMove->TimeIOBurstDone){
-	ProcessToMove->RemainingCpuBurstTime = ProcessToMove->CpuBurstTime;
-	ProcessToMove->JobStartTime = Now();
-	EnqueueProcess(READYQUEUE,ProcessToMove);
+    ProcessToMove->RemainingCpuBurstTime = ProcessToMove->CpuBurstTime;
+    ProcessToMove->JobStartTime = Now();
+    EnqueueProcess(READYQUEUE,ProcessToMove);
       } else {
-	EnqueueProcess(WAITINGQUEUE,ProcessToMove);
+    EnqueueProcess(WAITINGQUEUE,ProcessToMove);
       }
       if (ProcessToMove->ProcessID == IDFirstProcess){
-	break;
+    break;
       }
       ProcessToMove =DequeueProcess(WAITINGQUEUE);
     } // while (ProcessToMove)
@@ -171,11 +171,7 @@ void CPUScheduler(Identifier whichPolicy) {
  * Function: Returns process control block based on FCFS                *
 \***********************************************************************/
 ProcessControlBlock *FCFS_Scheduler() {
-  /* Select Process based on FCFS */
-  // Implement code for FCFS
-  ProcessControlBlock *selectedProcess = (ProcessControlBlock *) DequeueProcess(READYQUEUE);
-  
-  return(selectedProcess);
+    return(DequeueProcess(READYQUEUE));
 }
 
 
@@ -186,12 +182,18 @@ ProcessControlBlock *FCFS_Scheduler() {
  * Function: Returns process control block with SRTF                    *                                     
 \***********************************************************************/
 ProcessControlBlock *SRTF_Scheduler() {
-  /* Select Process with Shortest Remaining Time*/
-  ProcessControlBlock *selectedProcess = (ProcessControlBlock *) NULL;
-  
-  // Implement code for SRTF
- 
-  return(selectedProcess);
+    ProcessControlBlock *currentPCB = Queues[READYQUEUE].Tail;
+    ProcessControlBlock *shortestPCB = currentPCB;
+
+    while (currentPCB != NULL) {
+        if (currentPCB->RemainingCpuBurstTime < shortestPCB->RemainingCpuBurstTime) {
+            shortestPCB = currentPCB;
+        }
+
+        currentPCB = currentPCB->previous;
+    }
+
+    return(shortestPCB);
 }
 
 
@@ -201,12 +203,7 @@ ProcessControlBlock *SRTF_Scheduler() {
  * Function: Returns process control block based on RR                  *
  \***********************************************************************/
 ProcessControlBlock *RR_Scheduler() {
-  /* Select Process based on RR*/
-  ProcessControlBlock *selectedProcess = (ProcessControlBlock *) NULL;
-
-  // Implement code for RR                                                                                             
-
-  return(selectedProcess);
+    return(DequeueProcess(READYQUEUE));
 }
 
 /***********************************************************************\
@@ -274,8 +271,8 @@ void BookKeeping(void){
   printf("Policy Number = %d, Quantum = %.6f   Show = %d\n", PolicyNumber, Quantum, Show);
   printf("Number of Completed Processes = %d\n", NumberofJobs[THGT]);
   printf("ATAT=%f   ART=%f  CBT = %f  T=%f AWT=%f\n", 
-	 SumMetrics[TAT], SumMetrics[RT], SumMetrics[CBT], 
-	 NumberofJobs[THGT]/Now(), SumMetrics[WT]);
+     SumMetrics[TAT], SumMetrics[RT], SumMetrics[CBT],
+     NumberofJobs[THGT]/Now(), SumMetrics[WT]);
 
   exit(0);
 }
