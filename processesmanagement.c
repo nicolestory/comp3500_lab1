@@ -234,14 +234,10 @@ void Dispatcher() {
   }
 
   //Determine CPU Burst Length
-  TimePeriod CpuBurstTime;
-  if (PolicyNumber == RR)
+  TimePeriod CpuBurstTime= nextProcess->RemainingCpuBurstTime;
+  if (PolicyNumber == RR && CpuBurstTime < CpuBurstTime)
   {
     CpuBurstTime = Quantum;
-  }
-  else
-  {
-    CpuBurstTime = nextProcess->RemainingCpuBurstTime;
   }
   Timestamp start = Now();
   OnCPU(nextProcess, CpuBurstTime);
@@ -251,27 +247,6 @@ void Dispatcher() {
   // Update PCB:
   nextProcess->RemainingCpuBurstTime -= totalTime;
   nextProcess->TimeInCpu += totalTime;
- 
-
-  /*if (nextProcess != NULL)
-  {
-    printf("PCB is not null. Hooray.\n");
-    Timestamp start = Now();
-    OnCPU(nextProcess, nextProcess->RemainingCpuBurstTime);
-    Timestamp end = Now();
-    Timestamp totalTime = end - start;
-    printf("start %f end %f, totalTime %f, state %i, remainingtime %f\n", start, end, totalTime, nextProcess->state, nextProcess->RemainingCpuBurstTime);
-    if (nextProcess->state == DONE)
-    {
-      printf("DONE! To the Exit Queueue!\n");
-      EnqueueProcess(EXITQUEUE, nextProcess);
-    }
-    else
-    {
-      //printf("Working on it... To the Ready Queueue!\n");
-      EnqueueProcess(READYQUEUE, nextProcess);
-    }
-  }*/
 }
 
 /***********************************************************************\
@@ -309,13 +284,6 @@ void BookKeeping(void){
  
   ProcessControlBlock *currentPCB = Queues[EXITQUEUE].Tail;
 
-  if (currentPCB != NULL)
-  {
-    printf("Not null!\n\n");
-  }
-  else
-  { printf("OH NO, IT'S NULL!"); }
-
   while (currentPCB != NULL)
   {
     NumberofJobs[TAT]++;
@@ -327,7 +295,7 @@ void BookKeeping(void){
     
     currentPCB = currentPCB->previous;
     for (m = TAT; m < MAXMETRICS; m++)
-    { printf("%f", SumMetrics[m]); }
+    { printf("  %f  ", SumMetrics[m]); }
     printf("\n");
   }
 
