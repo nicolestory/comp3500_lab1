@@ -182,7 +182,7 @@ ProcessControlBlock *FCFS_Scheduler() {
  * Function: Returns process control block with SRTF                    *                                     
 \***********************************************************************/
 ProcessControlBlock *SRTF_Scheduler() {
-    ProcessControlBlock *currentPCB = Queues[READYQUEUE].Tail;
+    ProcessControlBlock *currentPCB = Queues[READYQUEUE].Head;
     ProcessControlBlock *shortestPCB = currentPCB;
 
     //find shortest remaining burst
@@ -191,7 +191,7 @@ ProcessControlBlock *SRTF_Scheduler() {
             shortestPCB = currentPCB;
         }
 
-        currentPCB = currentPCB->previous;
+        currentPCB = currentPCB->next;
     }
 
     //remove it from the queue
