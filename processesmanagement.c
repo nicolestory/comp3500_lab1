@@ -246,29 +246,23 @@ void Dispatcher() {
   }
   if (nextProcess->StartCpuTime == 0.0)
   {
-    printf("Brand new process (pid %i) on running queueueueuueu\n", nextProcess->ProcessID);
     nextProcess->StartCpuTime = Now();
-    printf("new startcpu: %f", nextProcess->StartCpuTime);
   }
-  if (nextProcess->TotalJobDuration == nextProcess->TimeInCpu)
+  if (nextProcess->TotalJobDuration >= nextProcess->TimeInCpu)
   {
-    printf("Finished process on running queueueueu, moving to exit q\n\n");
+    printf("Finished process %i on running queueueueu, moving to exit q\n\n", nextProcess->ProcessID);
+    nextProcess->JobExitTime = Now();
     nextProcess->state = DONE;
-    EnqueueProcess(EXITQUEUE, nextProcess);
+    EnqueueProcess(EXITQUEUE, DequeueProcess(RUNNINGQUEUE));
     return;
   }
 
   //Determine CPU Burst Length
-  TimePeriod CpuBurstTime;
-  if (PolicyNumber == RR)
+  TimePeriod CpuBurstTime= nextProcess->RemainingCpuBurstTime;
+  if (PolicyNumber == RR && CpuBurstTime < CpuBurstTime)
   {
     CpuBurstTime = Quantum;
   }
-  else
-  {
-    CpuBurstTime = nextProcess->RemainingCpuBurstTime;
-  }
-  printf("CPU burst time: %f, TimeInCpu: %f, TotalJobDuration: %f\n", CpuBurstTime, nextProcess->TimeInCpu, nextProcess->TotalJobDuration);
   Timestamp start = Now();
   OnCPU(nextProcess, CpuBurstTime);
   Timestamp end = Now();
@@ -277,29 +271,6 @@ void Dispatcher() {
   // Update PCB:
   nextProcess->RemainingCpuBurstTime -= totalTime;
   nextProcess->TimeInCpu += totalTime;
- 
-  printf("pid %i start %f end %f, totalTime %f, state %i, remainingtime %f, timeincpu %f\n", nextProcess->ProcessID, start, end, totalTime, nextProcess->state, nextProcess->RemainingCpuBurstTime, nextProcess->TimeInCpu);
- 
-
-  /*if (nextProcess != NULL)
-  {
-    printf("PCB is not null. Hooray.\n");
-    Timestamp start = Now();
-    OnCPU(nextProcess, nextProcess->RemainingCpuBurstTime);
-    Timestamp end = Now();
-    Timestamp totalTime = end - start;
-    printf("start %f end %f, totalTime %f, state %i, remainingtime %f\n", start, end, totalTime, nextProcess->state, nextProcess->RemainingCpuBurstTime);
-    if (nextProcess->state == DONE)
-    {
-      printf("DONE! To the Exit Queueue!\n");
-      EnqueueProcess(EXITQUEUE, nextProcess);
-    }
-    else
-    {
-      //printf("Working on it... To the Ready Queueue!\n");
-      EnqueueProcess(READYQUEUE, nextProcess);
-    }
-  }*/
 }
 
 /***********************************************************************\
@@ -332,16 +303,37 @@ void NewJobIn(ProcessControlBlock whichProcess){
 void BookKeeping(void){
   double end = Now(); // Total time for all processes to arrive
   Metric m;
+  
+  DisplayQueue("Exit Queue ", EXITQUEUE);
+ 
+  ProcessControlBlock *currentPCB = Queues[EXITQUEUE].Tail;
 
-  // Compute averages and final results
-  // ........
+  while (currentPCB != NULL)
+  {
+    NumberofJobs[TAT]++;
+    SumMetrics[TAT] += currentPCB->JobExitTime - currentPCB->JobArrivalTime;
+    SumMetrics[RT] += currentPCB->StartCpuTime -  currentPCB->JobArrivalTime;
+    SumMetrics[CBT] += currentPCB->TotalJobDuration;
+    //SumMetrics[THGT] += ???
+    SumMetrics[WT] += currentPCB->TimeInReadyQueue;
+    
+    currentPCB = currentPCB->previous;
+    for (m = TAT; m < MAXMETRICS; m++)
+    { printf("  %f  ", SumMetrics[m]); }
+    printf("\n");
+  }
 
+  for (m = RT; m < MAXMETRICS; m++)
+  {
+    NumberofJobs[m] = NumberofJobs[TAT];
+  }
+  
   printf("\n********* Processes Managemenent Numbers ******************************\n");
   printf("Policy Number = %d, Quantum = %.6f   Show = %d\n", PolicyNumber, Quantum, Show);
   printf("Number of Completed Processes = %d\n", NumberofJobs[THGT]);
   printf("ATAT=%f   ART=%f  CBT = %f  T=%f AWT=%f\n", 
      SumMetrics[TAT], SumMetrics[RT], SumMetrics[CBT],
-     NumberofJobs[THGT]/Now(), SumMetrics[WT]);
+     NumberofJobs[THGT]/end, SumMetrics[WT]);
 
   exit(0);
 }
