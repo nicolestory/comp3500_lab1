@@ -214,6 +214,7 @@ ProcessControlBlock *RR_Scheduler() {
  *              else move process from running queue to Exit Queue      *     
 \***********************************************************************/
 void Dispatcher() {
+  //DisplayQueue("Ready Queeuueue from Dispatcher", READYQUEUE);
   //double start = Now();
   ProcessControlBlock *nextProcess = Queues[RUNNINGQUEUE].Tail;
   if (nextProcess == NULL)
@@ -224,9 +225,9 @@ void Dispatcher() {
   {
     nextProcess->StartCpuTime = Now();
   }
-  if (nextProcess->TotalJobDuration >= nextProcess->TimeInCpu)
+  if (nextProcess->TotalJobDuration <= nextProcess->TimeInCpu)
   {
-    printf("Finished process %i on running queueueueu, moving to exit q\n\n", nextProcess->ProcessID);
+    printf("%f Finished process %i on running queueueueu, (%f), moving to exit q\n\n", Now(), nextProcess->ProcessID, nextProcess->TotalJobDuration);
     nextProcess->JobExitTime = Now();
     nextProcess->state = DONE;
     EnqueueProcess(EXITQUEUE, DequeueProcess(RUNNINGQUEUE));
@@ -234,15 +235,18 @@ void Dispatcher() {
   }
 
   //Determine CPU Burst Length
-  TimePeriod CpuBurstTime= nextProcess->RemainingCpuBurstTime;
-  if (PolicyNumber == RR && CpuBurstTime < CpuBurstTime)
+  TimePeriod CpuBurstTime = nextProcess->RemainingCpuBurstTime;
+  if (PolicyNumber == RR && Quantum < CpuBurstTime)
   {
     CpuBurstTime = Quantum;
   }
   Timestamp start = Now();
+
   OnCPU(nextProcess, CpuBurstTime);
   Timestamp end = Now();
   TimePeriod totalTime = end - start;
+
+  //printf("Total time: %f\n", totalTime);
 
   // Update PCB:
   nextProcess->RemainingCpuBurstTime -= totalTime;
@@ -294,9 +298,6 @@ void BookKeeping(void){
     SumMetrics[WT] += currentPCB->TimeInReadyQueue;
     
     currentPCB = currentPCB->previous;
-    for (m = TAT; m < MAXMETRICS; m++)
-    { printf("  %f  ", SumMetrics[m]); }
-    printf("\n");
   }
 
   for (m = RT; m < MAXMETRICS; m++)
