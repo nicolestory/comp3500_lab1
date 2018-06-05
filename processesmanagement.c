@@ -182,15 +182,39 @@ ProcessControlBlock *FCFS_Scheduler() {
  * Function: Returns process control block with SRTF                    *                                     
 \***********************************************************************/
 ProcessControlBlock *SRTF_Scheduler() {
-    ProcessControlBlock *currentPCB = Queues[READYQUEUE].Tail;
+    ProcessControlBlock *currentPCB = Queues[READYQUEUE].Head;
     ProcessControlBlock *shortestPCB = currentPCB;
 
+    //find shortest remaining burst
     while (currentPCB != NULL) {
         if (currentPCB->RemainingCpuBurstTime < shortestPCB->RemainingCpuBurstTime) {
             shortestPCB = currentPCB;
         }
 
-        currentPCB = currentPCB->previous;
+        currentPCB = currentPCB->next;
+    }
+
+    //remove it from the queue
+    if (shortestPCB != NULL) {
+        if (shortestPCB->next != NULL && shortestPCB->previous != NULL) { //in the middle of queue
+            shortestPCB->next->previous = shortestPCB->previous;
+            shortestPCB->previous->next = shortestPCB->next;
+        }
+        else if (shortestPCB->next != NULL) { //is the head of the queue
+            shortestPCB->next->previous = NULL;
+            Queues[READYQUEUE].Head = shortestPCB->next;
+        }
+        else if (shortestPCB->previous != NULL) { //is the tail of the queue
+            shortestPCB->previous->next = NULL;
+            Queues[READYQUEUE].Tail = shortestPCB->previous;
+        }
+        else { //is the only one in the queue
+            Queues[READYQUEUE].Head = NULL;
+            Queues[READYQUEUE].Tail = NULL;
+        }
+
+        shortestPCB->next = NULL;
+        shortestPCB->previous = NULL;
     }
 
     return(shortestPCB);
