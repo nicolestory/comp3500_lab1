@@ -249,6 +249,7 @@ void Dispatcher() {
   {
     nextProcess->StartCpuTime = Now();
   }
+  nextProcess->TimeInReadyQueue += Now() - nextProcess->JobStartTime;
   if (nextProcess->TotalJobDuration <= nextProcess->TimeInCpu)
   {
     printf("%f Finished process %i on running queueueueu, (%f), moving to exit q\n\n", Now(), nextProcess->ProcessID, nextProcess->TotalJobDuration);
