@@ -325,8 +325,10 @@ void BookKeeping(void){
 
   currentPCB = DequeueProcess(RUNNINGQUEUE);
   if (currentPCB != NULL) {
-      SumMetrics[RT] += currentPCB->StartCpuTime - currentPCB->JobArrivalTime;
-      NumberofJobs[RT]++;
+      if (currentPCB->StartCpuTime > 0.0) {
+          SumMetrics[RT] += currentPCB->StartCpuTime - currentPCB->JobArrivalTime;
+          NumberofJobs[RT]++;
+      }
 
       SumMetrics[CBT] += currentPCB->TotalJobDuration;
       NumberofJobs[CBT]++;
@@ -353,12 +355,14 @@ void BookKeeping(void){
 
       currentPCB = currentPCB->next;
   }
-  
+
+  printf("TAT=%f RT=%f CBT=%f WT=%f \n\n", SumMetrics[TAT], SumMetrics[RT], SumMetrics[CBT], SumMetrics[WT]);
+
   printf("\n********* Processes Managemenent Numbers ******************************\n");
   printf("Policy Number = %d, Quantum = %.6f   Show = %d\n", PolicyNumber, Quantum, Show);
   printf("Number of Completed Processes = %d\n", NumberofJobs[THGT]);
   printf("ATAT=%f   ART=%f  CBT = %f  T=%f AWT=%f\n", 
-     SumMetrics[TAT]/NumberofJobs[TAT], SumMetrics[RT]/NumberofJobs[RT], SumMetrics[CBT]/NumberofJobs[CBT],
+     SumMetrics[TAT]/NumberofJobs[TAT], SumMetrics[RT]/NumberofJobs[RT], SumMetrics[CBT]/NumberofJobs[CBT]*100,
      NumberofJobs[THGT]/end, SumMetrics[WT]/NumberofJobs[WT]);
 
   exit(0);
