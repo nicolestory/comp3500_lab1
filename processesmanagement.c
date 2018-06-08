@@ -356,8 +356,6 @@ void BookKeeping(void){
       currentPCB = currentPCB->next;
   }
 
-  printf("TAT=%f RT=%f CBT=%f WT=%f \n\n", SumMetrics[TAT], SumMetrics[RT], SumMetrics[CBT], SumMetrics[WT]);
-
   printf("\n********* Processes Managemenent Numbers ******************************\n");
   printf("Policy Number = %d, Quantum = %.6f   Show = %d\n", PolicyNumber, Quantum, Show);
   printf("Number of Completed Processes = %d\n", NumberofJobs[THGT]);
