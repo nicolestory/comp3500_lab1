@@ -308,34 +308,62 @@ void NewJobIn(ProcessControlBlock whichProcess){
 void BookKeeping(void){
   double end = Now(); // Total time for all processes to arrive
   Metric m;
-  
-  DisplayQueue("Exit Queue ", EXITQUEUE);
- 
-  ProcessControlBlock *currentPCB = Queues[EXITQUEUE].Tail;
 
-  while (currentPCB != NULL)
-  {
-    NumberofJobs[TAT]++;
-    SumMetrics[TAT] += currentPCB->JobExitTime - currentPCB->JobArrivalTime;
-    SumMetrics[RT] += currentPCB->StartCpuTime -  currentPCB->JobArrivalTime;
-    SumMetrics[CBT] += currentPCB->TotalJobDuration;
-    //SumMetrics[THGT] += ???
-    SumMetrics[WT] += currentPCB->TimeInReadyQueue;
-    
-    currentPCB = currentPCB->previous;
+  ProcessControlBlock *currentPCB = Queues[READYQUEUE].Head;
+  while (currentPCB != NULL) {
+      SumMetrics[RT] += currentPCB->StartCpuTime - currentPCB->JobArrivalTime;
+      NumberofJobs[RT]++;
+
+      SumMetrics[CBT] += currentPCB->TotalJobDuration;
+      NumberofJobs[CBT]++;
+
+      SumMetrics[WT] += currentPCB->TimeInReadyQueue;
+      NumberofJobs[WT]++;
+
+      currentPCB = currentPCB->next;
   }
 
-  for (m = RT; m < MAXMETRICS; m++)
-  {
-    NumberofJobs[m] = NumberofJobs[TAT];
+  currentPCB = DequeueProcess(RUNNINGQUEUE);
+  if (currentPCB != NULL) {
+      if (currentPCB->StartCpuTime > 0.0) {
+          SumMetrics[RT] += currentPCB->StartCpuTime - currentPCB->JobArrivalTime;
+          NumberofJobs[RT]++;
+      }
+
+      SumMetrics[CBT] += currentPCB->TotalJobDuration;
+      NumberofJobs[CBT]++;
+
+      SumMetrics[WT] += currentPCB->TimeInReadyQueue;
+      NumberofJobs[WT]++;
   }
-  
+
+  currentPCB = Queues[EXITQUEUE].Head;
+  while (currentPCB != NULL) {
+      SumMetrics[TAT] += currentPCB->JobExitTime - currentPCB->JobArrivalTime;
+      NumberofJobs[TAT]++;
+
+      SumMetrics[RT] += currentPCB->StartCpuTime - currentPCB->JobArrivalTime;
+      NumberofJobs[RT]++;
+
+      SumMetrics[CBT] += currentPCB->TotalJobDuration;
+      NumberofJobs[CBT]++;
+
+      NumberofJobs[THGT]++;
+
+      SumMetrics[WT] += currentPCB->TimeInReadyQueue;
+      NumberofJobs[WT]++;
+
+      currentPCB = currentPCB->next;
+  }
+
+  printf("TAT=%f RT=%f CBT=%f WT=%f \n\n", SumMetrics[TAT], SumMetrics[RT], SumMetrics[CBT], SumMetrics[WT]);
+
   printf("\n********* Processes Managemenent Numbers ******************************\n");
   printf("Policy Number = %d, Quantum = %.6f   Show = %d\n", PolicyNumber, Quantum, Show);
   printf("Number of Completed Processes = %d\n", NumberofJobs[THGT]);
   printf("ATAT=%f   ART=%f  CBT = %f  T=%f AWT=%f\n", 
-     SumMetrics[TAT], SumMetrics[RT], SumMetrics[CBT],
-     NumberofJobs[THGT]/end, SumMetrics[WT]);
+     SumMetrics[TAT]/NumberofJobs[TAT], SumMetrics[RT]/NumberofJobs[RT], SumMetrics[CBT]/NumberofJobs[CBT]*100,
+     NumberofJobs[THGT]/end, SumMetrics[WT]/NumberofJobs[WT]);
 
   exit(0);
 }
