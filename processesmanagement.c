@@ -252,7 +252,7 @@ void Dispatcher() {
   nextProcess->TimeInReadyQueue += Now() - nextProcess->JobStartTime;
   if (nextProcess->TotalJobDuration <= nextProcess->TimeInCpu)
   {
-    printf("%f Finished process %i on running queueueueu, (%f), moving to exit q\n\n", Now(), nextProcess->ProcessID, nextProcess->TotalJobDuration);
+    printf("%f Finished process %i on running queue, (%f), moving to exit queue\n\n", Now(), nextProcess->ProcessID, nextProcess->TotalJobDuration);
     nextProcess->JobExitTime = Now();
     nextProcess->state = DONE;
     EnqueueProcess(EXITQUEUE, DequeueProcess(RUNNINGQUEUE));
@@ -270,8 +270,6 @@ void Dispatcher() {
   OnCPU(nextProcess, CpuBurstTime);
   Timestamp end = Now();
   TimePeriod totalTime = end - start;
-
-  //printf("Total time: %f\n", totalTime);
 
   // Update PCB:
   nextProcess->RemainingCpuBurstTime -= totalTime;
@@ -306,13 +304,16 @@ void NewJobIn(ProcessControlBlock whichProcess){
 *     and CPU Utilization                                              *                                                     
 \***********************************************************************/
 void BookKeeping(void){
+  ManagementInitialization();
   double end = Now(); // Total time for all processes to arrive
   Metric m;
 
   ProcessControlBlock *currentPCB = Queues[READYQUEUE].Head;
   while (currentPCB != NULL) {
-      SumMetrics[RT] += currentPCB->StartCpuTime - currentPCB->JobArrivalTime;
-      NumberofJobs[RT]++;
+      if (currentPCB->StartCpuTime > 0.0) {
+          SumMetrics[RT] += currentPCB->StartCpuTime - currentPCB->JobArrivalTime;
+          NumberofJobs[RT]++;
+      }
 
       SumMetrics[CBT] += currentPCB->TotalJobDuration;
       NumberofJobs[CBT]++;
