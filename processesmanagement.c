@@ -248,7 +248,6 @@ void Dispatcher() {
   if (nextProcess->StartCpuTime == 0.0)
   {
     nextProcess->StartCpuTime = Now();
-    printf("Start CPU time %f, PID %i\n",  nextProcess->StartCpuTime, nextProcess->ProcessID);
   }
   nextProcess->TimeInReadyQueue += Now() - nextProcess->JobStartTime;
   if (nextProcess->TotalJobDuration <= nextProcess->TimeInCpu)
