@@ -252,7 +252,6 @@ void Dispatcher() {
   nextProcess->TimeInReadyQueue += Now() - nextProcess->JobStartTime;
   if (nextProcess->TotalJobDuration <= nextProcess->TimeInCpu)
   {
-    printf("%f Finished process %i on running queue, (%f), moving to exit queue\n\n", Now(), nextProcess->ProcessID, nextProcess->TotalJobDuration);
     nextProcess->JobExitTime = Now();
     nextProcess->state = DONE;
     EnqueueProcess(EXITQUEUE, DequeueProcess(RUNNINGQUEUE));
@@ -315,7 +314,7 @@ void BookKeeping(void){
           NumberofJobs[RT]++;
       }
 
-      SumMetrics[CBT] += currentPCB->TotalJobDuration;
+      SumMetrics[CBT] += currentPCB->TimeInCpu;
       NumberofJobs[CBT]++;
 
       SumMetrics[WT] += currentPCB->TimeInReadyQueue;
@@ -331,7 +330,7 @@ void BookKeeping(void){
           NumberofJobs[RT]++;
       }
 
-      SumMetrics[CBT] += currentPCB->TotalJobDuration;
+      SumMetrics[CBT] += currentPCB->TimeInCpu;
       NumberofJobs[CBT]++;
 
       SumMetrics[WT] += currentPCB->TimeInReadyQueue;
@@ -346,7 +345,7 @@ void BookKeeping(void){
       SumMetrics[RT] += currentPCB->StartCpuTime - currentPCB->JobArrivalTime;
       NumberofJobs[RT]++;
 
-      SumMetrics[CBT] += currentPCB->TotalJobDuration;
+      SumMetrics[CBT] += currentPCB->TimeInCpu;
       NumberofJobs[CBT]++;
 
       NumberofJobs[THGT]++;
