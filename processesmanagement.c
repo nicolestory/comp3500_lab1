@@ -308,7 +308,7 @@ void BookKeeping(void){
   Metric m;
 
   ProcessControlBlock *currentPCB = Queues[READYQUEUE].Head;
-  while (currentPCB != NULL) {
+  /*while (currentPCB != NULL) {
       if (currentPCB->StartCpuTime > 0.0) {
           SumMetrics[RT] += currentPCB->StartCpuTime - currentPCB->JobArrivalTime;
           NumberofJobs[RT]++;
@@ -335,7 +335,7 @@ void BookKeeping(void){
 
       SumMetrics[WT] += currentPCB->TimeInReadyQueue;
       NumberofJobs[WT]++;
-  }
+  }*/
 
   currentPCB = Queues[EXITQUEUE].Head;
   while (currentPCB != NULL) {
