@@ -238,23 +238,21 @@ ProcessControlBlock *RR_Scheduler() {
  *              else move process from running queue to Exit Queue      *     
 \***********************************************************************/
 void Dispatcher() {
-  //DisplayQueue("Ready Queeuueue from Dispatcher", READYQUEUE);
-  //double start = Now();
   ProcessControlBlock *nextProcess = Queues[RUNNINGQUEUE].Tail;
   if (nextProcess == NULL)
   {
     return;
   }
-  if (nextProcess->StartCpuTime == 0.0)
+  if (nextProcess->StartCpuTime == 0.0) // Initialize StartCpuTime
   {
     nextProcess->StartCpuTime = Now();
   }
   nextProcess->TimeInReadyQueue += Now() - nextProcess->JobStartTime;
-  if (nextProcess->TotalJobDuration <= nextProcess->TimeInCpu)
+  if (nextProcess->TotalJobDuration <= nextProcess->TimeInCpu) // If process is done
   {
     nextProcess->JobExitTime = Now();
     nextProcess->state = DONE;
-    EnqueueProcess(EXITQUEUE, DequeueProcess(RUNNINGQUEUE));
+    EnqueueProcess(EXITQUEUE, DequeueProcess(RUNNINGQUEUE)); // Move to Exit Queue
     return;
   }
 
