@@ -24,7 +24,7 @@ typedef enum {TAT,RT,CBT,THGT,WT} Metric;
 \*****************************************************************************/
 #define MAX_QUEUE_SIZE 10 
 #define FCFS            1 
-#define SRTF            2
+#define SJF             2
 #define RR              3 
 
 
@@ -57,7 +57,7 @@ Flag                 ManagementInitialization(void);
 void                 LongtermScheduler(void);
 void                 IO();
 void                 CPUScheduler(Identifier whichPolicy);
-ProcessControlBlock *SRTF_Scheduler();
+ProcessControlBlock *SJF_Scheduler();
 ProcessControlBlock *FCFS_Scheduler();
 ProcessControlBlock *RR_Scheduler();
 void                 Dispatcher();
@@ -146,7 +146,7 @@ void IO() {
 }
 
 /***********************************************************************\
- * Input : whichPolicy (1:FCFS, 2: SRTF, and 3:RR)                      *        
+ * Input : whichPolicy (1:FCFS, 2: SJF, and 3:RR)                       *        
  * Output: None                                                         * 
  * Function: Selects Process from Ready Queue and Puts it on Running Q. *
 \***********************************************************************/
@@ -155,7 +155,7 @@ void CPUScheduler(Identifier whichPolicy) {
   switch(whichPolicy){
     case FCFS : selectedProcess = FCFS_Scheduler();
       break;
-    case SRTF : selectedProcess = SRTF_Scheduler();
+    case SJF : selectedProcess = SJF_Scheduler();
       break;
     case RR   : selectedProcess = RR_Scheduler();
   }
@@ -177,11 +177,11 @@ ProcessControlBlock *FCFS_Scheduler() {
 
 
 /***********************************************************************\
- * Input : None                                                         *                                     
- * Output: Pointer to the process with shortest remaining time (SRTF)   *                                     
- * Function: Returns process control block with SRTF                    *                                     
+ * Input : None                                                         *         
+ * Output: Pointer to the process with smallest remaining time (SJF)    *
+ * Function: Returns process control block with SJF                    *
 \***********************************************************************/
-ProcessControlBlock *SRTF_Scheduler() {
+ProcessControlBlock *SJF_Scheduler() {
     ProcessControlBlock *currentPCB = Queues[READYQUEUE].Head;
     ProcessControlBlock *shortestPCB = currentPCB;
 
@@ -238,23 +238,21 @@ ProcessControlBlock *RR_Scheduler() {
  *              else move process from running queue to Exit Queue      *     
 \***********************************************************************/
 void Dispatcher() {
-  //DisplayQueue("Ready Queeuueue from Dispatcher", READYQUEUE);
-  //double start = Now();
   ProcessControlBlock *nextProcess = Queues[RUNNINGQUEUE].Tail;
   if (nextProcess == NULL)
   {
     return;
   }
-  if (nextProcess->StartCpuTime == 0.0)
+  if (nextProcess->StartCpuTime == 0.0) // Initialize StartCpuTime
   {
     nextProcess->StartCpuTime = Now();
   }
   nextProcess->TimeInReadyQueue += Now() - nextProcess->JobStartTime;
-  if (nextProcess->TotalJobDuration <= nextProcess->TimeInCpu)
+  if (nextProcess->TotalJobDuration <= nextProcess->TimeInCpu) // If process is done
   {
     nextProcess->JobExitTime = Now();
     nextProcess->state = DONE;
-    EnqueueProcess(EXITQUEUE, DequeueProcess(RUNNINGQUEUE));
+    EnqueueProcess(EXITQUEUE, DequeueProcess(RUNNINGQUEUE)); // Move to Exit Queue
     return;
   }
 
